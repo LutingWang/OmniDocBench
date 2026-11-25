@@ -140,8 +140,8 @@ def _dump_timeout_input(prefix, payload):
 
 def _teds_pair_worker(pred, gt, result_queue):
     try:
-        score = TEDS(structure_only=False).evaluate(pred, gt)
-        score_structure_only = TEDS(structure_only=True).evaluate(pred, gt)
+        score = TEDS(structure_only=False, ignore_nodes=['div']).evaluate(pred, gt)
+        score_structure_only = TEDS(structure_only=True, ignore_nodes=['div']).evaluate(pred, gt)
         result_queue.put(('success', (score, score_structure_only)))
     except Exception as exc:
         result_queue.put(('error', f'{type(exc).__name__}: {exc}'))
@@ -149,8 +149,8 @@ def _teds_pair_worker(pred, gt, result_queue):
 
 def _evaluate_teds_pair_with_timeout(pred, gt, timeout_sec):
     if timeout_sec is None:
-        score = TEDS(structure_only=False).evaluate(pred, gt)
-        score_structure_only = TEDS(structure_only=True).evaluate(pred, gt)
+        score = TEDS(structure_only=False, ignore_nodes=['div']).evaluate(pred, gt)
+        score_structure_only = TEDS(structure_only=True, ignore_nodes=['div']).evaluate(pred, gt)
         return score, score_structure_only, None
 
     result_queue = multiprocessing.Queue()
