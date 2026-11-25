@@ -922,7 +922,18 @@ def match_gt2pred_quick(gt_items, pred_items, line_type, img_name, truncated_tim
         ignores_gt_indices = set(range(len(ignore_gt_lines)))  
         ignores_pred_indices = set(range(len(ignore_pred_lines)))
 
-        ignore_matches = np.argwhere(ignore_matrix < 0.25) 
+        ignore_candidates = np.argwhere(ignore_matrix < 0.25)
+        ignore_matches = []
+        matched_ignore_gt = set()
+        matched_ignore_pred = set()
+        for gt_idx, pred_idx in sorted(
+            ignore_candidates, key=lambda pair: ignore_matrix[pair[0], pair[1]]
+        ):
+            if gt_idx in matched_ignore_gt or pred_idx in matched_ignore_pred:
+                continue
+            ignore_matches.append((gt_idx, pred_idx))
+            matched_ignore_gt.add(gt_idx)
+            matched_ignore_pred.add(pred_idx)
         # print("-------------ignore_matches-------------")
         # print(ignore_matches)
         if len(ignore_matches) > 0:
